@@ -43,6 +43,26 @@ class Revision {
     public function __construct($src, $delta_set, $revision_number) {
         $this->_delta_set = $delta_set;
         $this->_revision_number = $revision_number;
+        list($this->_commit, $this->_undo) = $this->extract_commit_undo($src);
+    }
+
+    public function extract_commit_undo($src) {
+        $commit = '';
+        $undo = '';
+        $current = 'commit';
+
+        foreach (explode(PHP_EOL, $src) as $line) {
+            if (strpos($line, '-- //@UNDO') !== FALSE) {
+                if ($current === 'undo')
+                    throw new Exception("2 or more '-- //@UNDO' found in: " . $src);
+
+                $current = 'undo';
+            } else {
+                $$current .= $line;
+            }
+        }
+
+        return array($commit, $undo);
     }
 
     public function __get($name) {
