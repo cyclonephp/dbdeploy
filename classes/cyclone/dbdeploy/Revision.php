@@ -9,6 +9,8 @@ namespace cyclone\dbdeploy;
  * @package dbdeploy
  * @property-read $commit string
  * @property-read $undo $string
+ * @property-read $delta_set string
+ * @property-read $revision_number int
  */
 class Revision {
 
@@ -66,7 +68,11 @@ class Revision {
     }
 
     public function __get($name) {
-        static $enabled_attributes = array('commit', 'undo');
+        static $enabled_attributes = array('commit'
+            , 'undo'
+            , 'delta_set'
+            , 'revision_number'
+        );
         if (in_array($name, $enabled_attributes))
             return $this->{'_' . $name};
 
