@@ -106,7 +106,7 @@ abstract class CommandProcessor {
         if (isset($args['--changelog-table'])) {
             $this->_changelog_table = $args['--changelog-table'];
         } else {
-            $this->_delta_set = cy\Config::inst()->get('dbdeploy.changelog_table');
+            $this->_changelog_table = cy\Config::inst()->get('dbdeploy.changelog_table');
         }
 
         if (isset($args['--connection'])) {

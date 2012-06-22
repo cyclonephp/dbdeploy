@@ -21,6 +21,20 @@ class DiffCommandProcessor extends CommandProcessor {
             throw new Exception('invalid revision format');
 
         $this->_source_reader->load_revisions($this->_delta_set);
+
+        $revisions = Revision::get_by_delta_set($this->_delta_set);
+
+        $rval = '';
+        if ($rev_from < $rev_to) {
+            for ($i = $rev_from + 1; $i <= $rev_to; ++$i) {
+                $rval .= $revisions[$i]->commit . PHP_EOL;
+            }
+        } elseif ($rev_from > $rev_to) {
+            for ($i = $rev_from; $i > $rev_to; --$i) {
+                $rval .= $revisions[$i]->undo . PHP_EOL;
+            }
+        }
+        return $rval;
     }
 
 }
