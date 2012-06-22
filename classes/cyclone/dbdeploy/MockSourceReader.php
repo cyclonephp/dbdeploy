@@ -24,5 +24,12 @@ class MockSourceReader implements SourceReader {
         return $this->_storage[$delta_set][$revision_number];
     }
 
+    public function load_revisions($delta_set) {
+        if ( ! isset($this->_storage[$delta_set]))
+            throw new Exception("delta set '$delta_set' not found");
+
+        return $this->_storage[$delta_set];
+    }
+
 
 }

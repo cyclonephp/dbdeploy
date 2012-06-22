@@ -17,4 +17,6 @@ interface SourceReader {
      */
     public function get_revision_source($delta_set, $revision_number);
 
+    public function load_revisions($delta_set);
+
 }
