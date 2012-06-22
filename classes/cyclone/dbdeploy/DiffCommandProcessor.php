@@ -6,6 +6,7 @@ use cyclone as cy;
 
 /**
  * @author Bence Erős <crystal@cyclonephp.org>
+ * @package dbdeploy
  */
 class DiffCommandProcessor extends CommandProcessor {
 
