@@ -5,12 +5,7 @@ use cyclone\dbdeploy;
 /**
  * @author Bence Erős <crystal@cyclonephp.org>
  */
-class DBDeploy_RevisionTest extends Kohana_Unittest_TestCase {
-
-    public function setUp() {
-        parent::setUp();
-        dbdeploy\Revision::clear_storage();
-    }
+class DBDeploy_RevisionTest extends DBDeploy_Test {
 
     public function test_constructor() {
         $rev = new dbdeploy\Revision('', 'ds', 10);
