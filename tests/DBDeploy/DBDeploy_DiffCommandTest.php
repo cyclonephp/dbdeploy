@@ -2,6 +2,8 @@
 
 use cyclone\dbdeploy;
 
+require_once realpath(__DIR__) . '/DBDeploy_Test.php';
+
 /**
  * @author Bence Erős <crystal@cyclonephp.org>
  */
