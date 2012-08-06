@@ -130,7 +130,7 @@ class Revision {
         if (in_array($name, $enabled_attributes))
             return $this->{'_' . $name};
 
-        throw new Exception("property $name of class " . __CLASS__ . "does not exist or is not readable");
+        throw new \cyclone\PropertyAccessException(get_class($this), $name);
     }
 
 }
