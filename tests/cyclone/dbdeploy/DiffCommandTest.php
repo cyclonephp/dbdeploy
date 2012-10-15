@@ -1,16 +1,16 @@
 <?php
 
-use cyclone\dbdeploy;
+namespace cyclone\dbdeploy;
 
-require_once realpath(__DIR__) . '/DBDeploy_Test.php';
+require_once realpath(__DIR__) . '/DBDeployTest.php';
 
 /**
  * @author Bence Erős <crystal@cyclonephp.org>
  */
-class DBDeploy_DiffCommandTest extends DBDeploy_Test {
+class DiffCommandTest extends DBDeployTest {
 
     public function test_get_result_commit() {
-        $proc = dbdeploy\CommandProcessor::factory('diff');
+        $proc = CommandProcessor::factory('diff');
         $proc->setup(array(
             '--revision' => '1..3',
             '--delta-set' => 'ds'
@@ -22,7 +22,7 @@ commit3
     }
 
     public function test_get_result_undo() {
-        $proc = dbdeploy\CommandProcessor::factory('diff');
+        $proc = CommandProcessor::factory('diff');
         $proc->setup(array(
             '--revision' => '3..1',
             '--delta-set' => 'ds'
