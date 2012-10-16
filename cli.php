@@ -49,7 +49,7 @@ return array(
                     '--quiet' => array(
                         'alias' => '-q',
                         'required' => FALSE,
-                        'desrc' => 'does not write the generated SQL script to the standard output',
+                        'descr' => 'does not write the generated SQL script to the standard output',
                         'parameter' => NULL
                     )
                 ),
@@ -96,7 +96,7 @@ return array(
                     '--quiet' => array(
                         'alias' => '-q',
                         'required' => FALSE,
-                        'desrc' => 'does not write the generated SQL script to the standard output',
+                        'descr' => 'does not write the generated SQL script to the standard output',
                         'parameter' => NULL
                     )
                 ),
@@ -149,7 +149,7 @@ return array(
                         'alias' => '-q',
                         'required' => FALSE,
                         'default' => FALSE,
-                        'desrc' => 'does not write the generated SQL script to the standard output',
+                        'descr' => 'does not write the generated SQL script to the standard output',
                         'parameter' => NULL
                     )
                 ),

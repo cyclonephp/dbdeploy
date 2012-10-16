@@ -27,10 +27,16 @@ class DiffCommandProcessor extends CommandProcessor {
         $rval = '';
         if ($rev_from < $rev_to) {
             for ($i = $rev_from + 1; $i <= $rev_to; ++$i) {
+                if ( ! isset($revisions[$i]))
+                    throw new Exception("revision $i in delta set {$this->_delta_set} does not exist");
+
                 $rval .= $revisions[$i]->commit . PHP_EOL;
             }
         } elseif ($rev_from > $rev_to) {
             for ($i = $rev_from; $i > $rev_to; --$i) {
+                if ( ! isset($revisions[$i]))
+                    throw new Exception("revision $i in delta set {$this->_delta_set} does not exist");
+
                 $rval .= $revisions[$i]->undo . PHP_EOL;
             }
         }

@@ -90,6 +90,17 @@ abstract class CommandProcessor {
     public function execute($args) {
         $this->setup($args);
         $this->_source_reader = new FileSourceReader($this->_src_dir);
+        $ddl_str = $this->get_result();
+        if ( ! $this->_quiet) {
+            echo $ddl_str;
+        }
+        if ($this->_exec) {
+            $this->exec_ddl($ddl_str);
+        }
+    }
+
+    protected function exec_ddl($ddl_str) {
+        DB::executor($this->_connection)->exec_custom($ddl_str);
     }
 
     public function setup($args) {
@@ -116,9 +127,9 @@ abstract class CommandProcessor {
         }
 
         if (isset($args['--src-dir'])) {
-            $this->_connection = $args['--src-dir'];
+            $this->_src_dir = $args['--src-dir'];
         } else {
-            $this->_connection = cy\Config::inst()->get('dbdeploy.src_dir');
+            $this->_src_dir = cy\Config::inst()->get('dbdeploy.src_dir');
         }
 
         if (isset($args['--exec'])) {

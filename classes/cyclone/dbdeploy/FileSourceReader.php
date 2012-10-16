@@ -49,12 +49,19 @@ class FileSourceReader implements SourceReader{
 
     public function load_revisions($delta_set) {
         if ($delta_set == '') {
-            $dir = $this->_src_dir . \DIRECTORY_SEPARATOR . '*';
+            $dir = $this->_src_dir . \DIRECTORY_SEPARATOR;
         } else {
-            $dir = $this->_src_dir  . \DIRECTORY_SEPARATOR . $delta_set . \DIRECTORY_SEPARATOR . '*';
+            $dir = $this->_src_dir  . \DIRECTORY_SEPARATOR . $delta_set . \DIRECTORY_SEPARATOR;
         }
+
+        if ( ! is_dir($dir))
+            throw new Exception("$dir is not a directory");
+
         $rval = array();
-        $files = glob($dir);
+        $files = glob($dir . '*');
+        if (count($files) === 0)
+            throw new Exception("directory $dir is empty");
+
         $dir_len = strlen($dir);
         $last_rev_number = 0;
         $last_file_name = '';
