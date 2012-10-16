@@ -6,8 +6,7 @@ namespace cyclone\dbdeploy;
  */
 class DBDeployTest extends \Kohana_Unittest_TestCase {
 
-    public function setUp() {
-        parent::setUp();
+    public function tearDown() {
         Revision::clear_storage();
     }
 

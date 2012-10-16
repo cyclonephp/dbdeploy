@@ -94,9 +94,6 @@ abstract class CommandProcessor {
         if ( ! $this->_quiet) {
             echo $ddl_str;
         }
-        if ($this->_exec) {
-            $this->exec_ddl($ddl_str);
-        }
     }
 
     protected function exec_ddl($ddl_str) {
