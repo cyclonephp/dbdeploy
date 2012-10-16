@@ -66,6 +66,9 @@ class FileSourceReader implements SourceReader{
         $last_rev_number = 0;
         $last_file_name = '';
         foreach ($files as $full_file_name) {
+            if (is_dir($full_file_name))
+                continue;
+
             $file_name = substr($full_file_name, $dir_len);
             if ( ! is_numeric($file_name{0}))
                 throw new Exception("invalid revision file name: $file_name");
