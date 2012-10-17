@@ -58,8 +58,10 @@ class ChangelogManager {
             ->where('delta_set', '=', DB::esc($rev->delta_set))->exec($this->_connection);
     }
 
-    public function current() {
-        $result = DB::select(array(DB::expr('max(change_number)'), 'max'))->from($this->_changelog_table)
+    public function current($delta_set) {
+        $result = DB::select(array(DB::expr('max(change_number)'), 'max'))
+            ->from($this->_changelog_table)
+            ->where('delta_set', '=', DB::esc($delta_set))
             ->exec($this->_connection)->get_single_row();
         return $result['max'];
 

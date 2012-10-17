@@ -72,14 +72,14 @@ delete from ". self::DUMMY_TBL . " where id = 10;", self::DS, 2);
 drop table ". self::DUMMY_TBL . ";", self::DS, 1);
         $this->_mgr->apply($rev);
 
-        $this->assertEquals(1, $this->_mgr->current());
+        $this->assertEquals(1, $this->_mgr->current(self::DS));
 
         $rev = new Revision("insert into " . self::DUMMY_TBL . " values(10);
 -- //@UNDO
 delete from ". self::DUMMY_TBL . " where id = 10;", self::DS, 2);
         $this->_mgr->apply($rev);
 
-        $this->assertEquals(2, $this->_mgr->current());
+        $this->assertEquals(2, $this->_mgr->current(self::DS));
 
 
     }
