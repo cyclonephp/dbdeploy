@@ -16,6 +16,13 @@ class FileSourceReader implements SourceReader{
      */
     protected $_src_dir;
 
+    /**
+     * The number of revisions per-deltaset.
+     *
+     * @var array
+     */
+    private $_revision_count = array();
+
     public function __construct($src_dir) {
         $this->_src_dir = $src_dir;
     }
@@ -86,7 +93,20 @@ class FileSourceReader implements SourceReader{
             $last_file_name = $file_name;
             ++$last_rev_number;
         }
+        $this->_revision_count[$delta_set] = $last_rev_number;
         return $rval;
+    }
+
+    /**
+     * Returns the latest (highest number) revision available in the data source.
+     * @param $delta_set
+     * @return int
+     */
+    public function latest_revision($delta_set) {
+        if ( ! isset($this->_revision_count[$delta_set]))
+            throw new Exception("delta set '$delta_set' is not loaded");
+
+        return $this->_revision_count[$delta_set];
     }
 
 

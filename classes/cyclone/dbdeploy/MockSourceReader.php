@@ -31,5 +31,14 @@ class MockSourceReader implements SourceReader {
         return $this->_storage[$delta_set];
     }
 
+    /**
+     * Returns the latest (highest number) revision available in the data source.
+     * @param $delta_set
+     * @return int
+     */
+    public function latest_revision($delta_set) {
+        return count($this->_storage[$delta_set]);
+    }
+
 
 }
