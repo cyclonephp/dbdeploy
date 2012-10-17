@@ -65,4 +65,22 @@ delete from ". self::DUMMY_TBL . " where id = 10;", self::DS, 2);
         $result = DB::select()->from(self::DUMMY_TBL)->exec(self::CONN)->as_array();
         $this->assertEquals(0, count($result));
     }
+
+    public function test_current() {
+        $rev = new Revision("create table " . self::DUMMY_TBL . "(id int);
+-- //@UNDO
+drop table ". self::DUMMY_TBL . ";", self::DS, 1);
+        $this->_mgr->apply($rev);
+
+        $this->assertEquals(1, $this->_mgr->current());
+
+        $rev = new Revision("insert into " . self::DUMMY_TBL . " values(10);
+-- //@UNDO
+delete from ". self::DUMMY_TBL . " where id = 10;", self::DS, 2);
+        $this->_mgr->apply($rev);
+
+        $this->assertEquals(2, $this->_mgr->current());
+
+
+    }
 }
