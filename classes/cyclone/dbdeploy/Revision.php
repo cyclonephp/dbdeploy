@@ -11,6 +11,7 @@ namespace cyclone\dbdeploy;
  * @property-read $undo $string
  * @property-read $delta_set string
  * @property-read $revision_number int
+ * @property-read $description string
  */
 class Revision {
 
@@ -87,9 +88,12 @@ class Revision {
      */
     protected $_revision_number;
 
-    public function __construct($src, $delta_set, $revision_number) {
+    protected $_description;
+
+    public function __construct($src, $delta_set, $revision_number, $description) {
         $this->_delta_set = $delta_set;
         $this->_revision_number = $revision_number;
+        $this->_description = $description;
         list($this->_commit, $this->_undo) = $this->extract_commit_undo($src);
         if ( ! isset(self::$_storage[$delta_set])) {
             self::$_storage[$delta_set] = array();
@@ -126,6 +130,7 @@ class Revision {
             , 'undo'
             , 'delta_set'
             , 'revision_number'
+            , 'description'
         );
         if (in_array($name, $enabled_attributes))
             return $this->{'_' . $name};

@@ -13,13 +13,13 @@ class DBDeployTest extends \Kohana_Unittest_TestCase {
     public static function load_sample_revisions() {
         new Revision('commit1
 -- //@UNDO
-undo1', 'ds', 1);
+undo1', 'ds', 1, 'descr');
         new Revision('commit2
 -- //@UNDO
-undo2', 'ds', 2);
+undo2', 'ds', 2, 'descr');
         new Revision('commit3
 -- //@UNDO
-undo3', 'ds', 3);
+undo3', 'ds', 3, 'descr');
     }
 
     protected function get_mock_storage() {
@@ -27,13 +27,13 @@ undo3', 'ds', 3);
             'ds' => array(
                 new Revision('commit1
 -- //@UNDO
-undo1', 'ds', 1),
+undo1', 'ds', 1, 'descr'),
         new Revision('commit2
 -- //@UNDO
-undo2', 'ds', 2),
+undo2', 'ds', 2, 'descr'),
         new Revision('commit3
 -- //@UNDO
-undo3', 'ds', 3)
+undo3', 'ds', 3, 'descr')
             )
         ));
     }

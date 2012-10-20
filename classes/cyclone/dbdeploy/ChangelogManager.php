@@ -99,7 +99,8 @@ class ChangelogManager {
             'change_number' => $rev->revision_number,
             'delta_set' => $rev->delta_set,
             'start_dt' => $now,
-            'applied_by' => static::$applied_by
+            'applied_by' => static::$applied_by,
+            'description' => $rev->description
         ))->exec($this->_connection);
         DB::query($rev->commit)->exec($this->_connection);
         $now = date('Y-m-d H:i:s');

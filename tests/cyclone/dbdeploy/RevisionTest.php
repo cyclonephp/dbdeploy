@@ -10,9 +10,10 @@ require_once realpath(__DIR__) . '/DBDeployTest.php';
 class RevisionTest extends DBDeployTest {
 
     public function test_constructor() {
-        $rev = new Revision('', 'ds', 10);
+        $rev = new Revision('', 'ds', 10, 'descr');
         $this->assertEquals('ds', $rev->delta_set);
         $this->assertEquals(10, $rev->revision_number);
+        $this->assertEquals('descr', $rev->description);
     }
 
     /**
@@ -21,14 +22,14 @@ class RevisionTest extends DBDeployTest {
     public function test_extract_commit_undo() {
         $rev = new Revision('commit
         -- //@UNDO
-undo', 'ds', 10);
+undo', 'ds', 10, 'descr');
         $this->assertEquals('commit', $rev->commit);
         $this->assertEquals('undo', $rev->undo);
 
         $rev = new Revision('commit
         -- //@UNDO
 undo
--- //@UNDO', 'ds', 10);
+-- //@UNDO', 'ds', 10, 'descr');
     }
 
 
@@ -38,13 +39,13 @@ undo
     public function test_constructor_failure() {
         $rev = new Revision('commit
         -- //@UNDO
-undo', 'ds', 10);
+undo', 'ds', 10, 'descr');
         $this->assertEquals('commit', $rev->commit);
         $this->assertEquals('undo', $rev->undo);
 
         $rev = new Revision('commit
         -- //@UNDO
-undo', 'ds', 10);
+undo', 'ds', 10, 'descr');
     }
 
     /**

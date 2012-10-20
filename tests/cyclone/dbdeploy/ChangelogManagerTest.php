@@ -32,7 +32,7 @@ class ChangelogManagerTest extends DBDeployTest {
     public function test_apply() {
         $rev = new Revision("create table " . self::DUMMY_TBL . "(id int);
 -- //@UNDO
-drop table ". self::DUMMY_TBL . ";", self::DS, 1);
+drop table ". self::DUMMY_TBL . ";", self::DS, 1, 'descr');
         $this->_mgr->apply($rev);
         $result = DB::select()->from(self::CHANGELOG_TABLE)
             ->exec(self::CONN)->as_array();
@@ -41,17 +41,18 @@ drop table ". self::DUMMY_TBL . ";", self::DS, 1);
         $this->assertEquals('ds', $result['delta_set']);
         $this->assertEquals('1', $result['change_number']);
         $this->assertEquals(ChangelogManager::$applied_by, $result['applied_by']);
+        $this->assertEquals('descr', $result['description']);
     }
 
     public function test_undo() {
         $rev = new Revision("create table " . self::DUMMY_TBL . "(id int);
 -- //@UNDO
-drop table ". self::DUMMY_TBL . ";", self::DS, 1);
+drop table ". self::DUMMY_TBL . ";", self::DS, 1, 'descr');
         $this->_mgr->apply($rev);
 
         $rev = new Revision("insert into " . self::DUMMY_TBL . " values(10);
 -- //@UNDO
-delete from ". self::DUMMY_TBL . " where id = 10;", self::DS, 2);
+delete from ". self::DUMMY_TBL . " where id = 10;", self::DS, 2, 'descr');
         $this->_mgr->apply($rev);
 
         $this->_mgr->undo($rev);
@@ -70,14 +71,14 @@ delete from ". self::DUMMY_TBL . " where id = 10;", self::DS, 2);
     public function test_current() {
         $rev = new Revision("create table " . self::DUMMY_TBL . "(id int);
 -- //@UNDO
-drop table ". self::DUMMY_TBL . ";", self::DS, 1);
+drop table ". self::DUMMY_TBL . ";", self::DS, 1, 'descr');
         $this->_mgr->apply($rev);
 
         $this->assertEquals(1, $this->_mgr->current(self::DS));
 
         $rev = new Revision("insert into " . self::DUMMY_TBL . " values(10);
 -- //@UNDO
-delete from ". self::DUMMY_TBL . " where id = 10;", self::DS, 2);
+delete from ". self::DUMMY_TBL . " where id = 10;", self::DS, 2, 'descr');
         $this->_mgr->apply($rev);
 
         $this->assertEquals(2, $this->_mgr->current(self::DS));
