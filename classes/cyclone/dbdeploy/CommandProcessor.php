@@ -90,6 +90,7 @@ abstract class CommandProcessor {
     public function execute($args) {
         $this->setup($args);
         $this->_source_reader = new FileSourceReader($this->_src_dir);
+
         $ddl_str = $this->get_result();
         if ( ! $this->_quiet) {
             echo $ddl_str;
