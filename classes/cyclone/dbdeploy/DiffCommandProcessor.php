@@ -17,6 +17,12 @@ class DiffCommandProcessor extends CommandProcessor {
 
         list($rev_from, $rev_to) = $revisions;
 
+        if ($rev_from < 0)
+            throw new Exception("'$rev_from' is not a valid revision number");
+
+        if ($rev_to < 0)
+            throw new Exception("'$rev_to' is not a valid revision number");
+
         if ( ! is_numeric($rev_from) || ! is_numeric($rev_to))
             throw new Exception('invalid revision format');
 

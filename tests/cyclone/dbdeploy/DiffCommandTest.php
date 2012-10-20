@@ -9,6 +9,20 @@ require_once realpath(__DIR__) . '/DBDeployTest.php';
  */
 class DiffCommandTest extends DBDeployTest {
 
+    public function test_validation() {
+        $fail_revs = array('asd', '1..k', 'k..1', 'k..k', '-1..0', '4..-1');
+        foreach ($fail_revs as $rev) {
+            $proc = CommandProcessor::factory('diff');
+            $proc->setup(array(
+                '--revision' => $rev
+            ));
+            try {
+                $proc->get_result();
+                $this->fail("failed to throw exception for revision '$rev'");
+            } catch (Exception $ex) {}
+        }
+    }
+
     public function test_get_result_commit() {
         $proc = CommandProcessor::factory('diff');
         $proc->setup(array(
