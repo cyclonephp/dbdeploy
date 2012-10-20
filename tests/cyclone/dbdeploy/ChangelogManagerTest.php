@@ -40,6 +40,7 @@ drop table ". self::DUMMY_TBL . ";", self::DS, 1);
         $result = $result[0];
         $this->assertEquals('ds', $result['delta_set']);
         $this->assertEquals('1', $result['change_number']);
+        $this->assertEquals(ChangelogManager::$applied_by, $result['applied_by']);
     }
 
     public function test_undo() {

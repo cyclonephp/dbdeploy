@@ -20,13 +20,13 @@ interface SourceReader {
     /**
      * Loads the revisions from the data source managed by the implementation.
      *
-     * @param $delta_set the delta set to be loaded
+     * @param $delta_set string the delta set to be loaded
      */
     public function load_revisions($delta_set);
 
     /**
      * Returns the latest (highest number) revision available in the data source.
-     * @param $delta_set
+     * @param $delta_set string
      * @return int
      */
     public function latest_revision($delta_set);

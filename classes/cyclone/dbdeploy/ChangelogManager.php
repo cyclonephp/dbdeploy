@@ -4,7 +4,65 @@ namespace cyclone\dbdeploy;
 use cyclone\DB;
 use cyclone\db\ConnectionException;
 
+/**
+ * <p>A ChangelogManager handles the changelog table which stores which revisions have been applied
+ * to the schema. If a revision is applied then one row is inserted to the changelog table. If a revision
+ * is deleted then its corresponding row is deleted from the table.</p>
+ *
+ * <p>The name of the changelog table is <code>changelog</code> and it has a composite
+ *  <code>(change_number, delta_set)</code> primary key. The changelog table has the following schema:
+ *      <table>
+ *          <thead>
+ *              <tr>
+ *                  <th>column name</th>
+ *                  <th>column DDL</th>
+ *                  <th>description</th>
+ *              </tr>
+ *          </thead>
+ *          <tbody>
+ *              <tr>
+ *                  <td>change_number</td>
+ *                  <td>BIGINT NOT NULL</td>
+ *                  <td>the applied revision number</td>
+ *              </tr>
+ *              <tr>
+ *                  <td>delta_set</td>
+ *                  <td>VARCHAR(10) NOT NULL</td>
+ *                  <td>the delta set which the applied revision belongs to</td>
+ *              </tr>
+ *              <tr>
+ *                  <td>start_dt</td>
+ *                  <td>TIMESTAMP NOT NULL</td>
+ *                  <td>the timestamp when the dbdeploy tool started to apply the revision</td>
+ *              </tr>
+ *              <tr>
+ *                  <td>complete_dt</td>
+ *                  <td>TIMESTAMP NOT NULL</td>
+ *                  <td>the timestamp when the dbdeploy tool finished applying the revision</td>
+ *              </tr>
+ *              <tr>
+ *                  <td>applied_by</td>
+ *                  <td>VARCHAR(100) NOT NULL</td>
+ *                  <td>the name of the tool which applied the revision. The dbdeploy tool of CyclonePHP
+ *                      uses the 'cyclone-dbdeploy' string by default, but it can be changed by assigning
+ *                      a new value to the @c ChangelogManager::$applied_by property.</td>
+ *              </tr>
+ *              <tr>
+ *                  <td>description</td>
+ *                  <td>VARCHAR(500) NOT NULL</td>
+ *                  <td>the description of the revision</td>
+ *              </tr>
+ *          </tbody>
+ *      </table>
+ *      This schema is the same as the schema used by the dbdeploy task of Phing.
+ * </p>
+ *
+ * @package DB
+ * @author Bence Erős <crystal@cyclonephp.org>
+ */
 class ChangelogManager {
+
+    public static $applied_by = 'cyclone-dbdeploy';
 
     private $_connection;
 
@@ -40,7 +98,8 @@ class ChangelogManager {
         DB::insert($this->_changelog_table)->values(array(
             'change_number' => $rev->revision_number,
             'delta_set' => $rev->delta_set,
-            'start_dt' => $now
+            'start_dt' => $now,
+            'applied_by' => static::$applied_by
         ))->exec($this->_connection);
         DB::query($rev->commit)->exec($this->_connection);
         $now = date('Y-m-d H:i:s');
