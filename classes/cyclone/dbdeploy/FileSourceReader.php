@@ -33,7 +33,7 @@ class FileSourceReader implements SourceReader{
      * @return Revision
      */
     public function get_revision_source($delta_set, $revision_number) {
-        $dir = static::get_delta_set_dir_name($delta_set);
+        $dir = $this->get_delta_set_dir_name($delta_set);
         $pattern = $dir . $revision_number . '*';
         $files = glob($pattern);
         switch(count($files)) {
@@ -53,7 +53,7 @@ class FileSourceReader implements SourceReader{
         return new Revision(file_get_contents($file), $delta_set, $revision_number, $descr);
     }
 
-    public static function get_delta_set_dir_name($delta_set) {
+    public function get_delta_set_dir_name($delta_set) {
         if ($delta_set == '') {
             return $this->_src_dir . \DIRECTORY_SEPARATOR;
         } else {
@@ -62,7 +62,7 @@ class FileSourceReader implements SourceReader{
     }
 
     public function load_revisions($delta_set) {
-        $dir = static::get_delta_set_dir_name($delta_set);
+        $dir = $this->get_delta_set_dir_name($delta_set);
 
         if ( ! is_dir($dir))
             throw new Exception("$dir is not a directory");
@@ -83,7 +83,7 @@ class FileSourceReader implements SourceReader{
 
             list($curr_rev_number, $descr) = static::parse_revision_filename($file_name);
 
-            if ($curr_rev_number !== $last_rev_number + 1)
+            if ($curr_rev_number !== $last_rev_number + 1 && $curr_rev_number > 1)
                 throw new Exception("revision numbers are not sequential: '$last_file_name' is followed by '$file_name'");
 
             if ( ! is_readable($full_file_name))
