@@ -1,0 +1,192 @@
+@section dbdeploy-intro Introduction
+
+<p>Unlike most of the libraries of CyclonePHP, dbdeploy is not a class library but a command-line tool
+for database version controlling. The tool can be used to apply and revert so-called <i>revisions</i>
+on a relational database.</p>
+
+<p>A revision is a text file containing commands for the database, usually DDL statements. The revision
+file has 2 parts
+ <ol>
+    <li>the first part is a so-called <i>commit</i> part which is executed by the dbdeploy tool
+when the revision is applied to the database.</li>
+    <li>the second part is the <i>undo</i> part which is executed when the revision is reverted.</li>
+ </ol>
+ The two parts of the revision file should be separated by a line containing <code>-- //@UNDO</code>
+</p>
+
+<p>It is important to keep in mind that the dbdeploy tool handles both the commit and undo parts as
+plain text. Therefore it is the user's responsibility to write both syntactically and semantically
+correct statements in the revision file. As a consequence, the tool won't verify that if the undo part
+properly rolls back the commit part.</p>
+
+<p>Example revision file: @code
+CREATE TABLE user (id INT PRIMARY KEY AUTO_INCREMENT
+    , name VARCHAR(200) NOT NULL
+    , email VARCHAR(200) NOT NUL
+);
+-- //@UNDO
+DROP TABLE user; @endcode
+</p>
+
+
+@subsection dbdeploy-dependencies Dependencies
+
+<p>The dbdeploy tool relies on the following libraries of CyclonePHP:
+    <ul>
+        <li>cyclone core</li>
+        <li>DB</li>
+    </ul>
+</p>
+
+@section dbdeploy-usage Usage
+
+<p>To manage database versioning with dbdeploy you should store the revision files containing the
+database schema in the following way:
+<ul>
+    <li>The files can be in any arbitary directory</li>
+    <li>The file names should have 2 parts separated by a dash ("-"). The part before the dash is the
+        revision number, it should be a positive integer number. The part after the dash is a (very)
+        short description of the revision.
+    </li>
+    <li>The revision numbers must be sequential and should start from 1.</li>
+</ul>
+Example schema directory:
+<ul>
+    <li>schema/
+        <ul>
+            <li>1-initial.sql</li>
+            <li>2-add_users_fk.sql</li>
+            <li>3-function_calc_availablility.sql</li>
+            <li>...</li>
+        </ul>
+    </li>
+</ul>
+</p>
+
+<p>Let's assume you have just started a new project. You already have an empty database to connect to.
+You can set up your database connection in the <code>&lt;app&gt;/db/default.php</code> configuration file (see
+the corresponding chapter of the DB library). If the database is empty then we can say it is at the 0th
+revision. If you already have 3 revisions and you want to apply them, you can do it using the<br/>
+<code>./cyphp dbdeploy apply -r 3</code><br/>
+command. Using the <code>-r</code> option you pass the target revision. This command will execute the
+<i>commit</i> part of the 3 revisions on the target database.</p>
+
+<p>After applying the first 3 revisions you can revert the database to version 2 using the following
+command: <br/>
+<code>./cyphp dbdeploy revert -r 2</code><br/>
+It will execute the <i>undo</i> part of the 3rd revision.</p>
+
+<p>If you want to diff two revisions against each other then you can execute the following command:
+<code>./cyphp dbdeploy diff -r 1..3</code></p>
+
+@section dbdeploy-config Configuration
+
+<p>The three commands of dbdeploy share almost the same options, and their default values can be set
+by configuration keys.
+
+    <table>
+        <thead>
+            <tr>
+                <th>Configuration key</th>
+                <th>Command-line option</th>
+                <th>Default value</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><i>none</i></td>
+                <td>--revision</td>
+                <td><i>none</i></td>
+                <td>In the case of the <code>apply</code> and <code>revert</code> command it is the number
+                    of the target revision. In the case of the <code>diff</code> command it is a string
+                    in "number..number" format.
+                </td>
+            </tr>
+            <tr>
+                <td>dbdeploy.delta_set</td>
+                <td>--delta-set</td>
+                <td><i>empty string</i></td>
+                <td>The name of the delta set to be used (see later)</td>
+            </tr>
+            <tr>
+                <td>dbdeploy.changelog_table</td>
+                <td>--changelog-table</td>
+                <td><code>changelog</code></td>
+                <td>The name of the database table to store versioning metadata. See the API docs of
+                    @c cyclone\dbdeploy\ChangelogManager for table schema information.</td>
+            </tr>
+            <tr>
+                <td>dbdeploy.connection</td>
+                <td>--connection</td>
+                <td><code>default</code></td>
+                <td>The name of the database connection to be used. The connection information must be set up
+                    in the corresponding configuration file (eg. if the value of <code>dbdeploy.connection</code>
+                    is <code>mydb</code> then you should set up the connection parameters in the
+                    <code>config/db/mydb.php</code>, see the DB library docs for more details).</td>
+            </tr>
+            <tr>
+                <td>dbdeploy.src_dir</td>
+                <td>--src-dir</td>
+                <td><code>schema</code></td>
+                <td>The path to the directory containing revision files.</td>
+            </tr>
+            <tr>
+                <td>dbdeploy.exec</td>
+                <td>--exec</td>
+                <td><code>FALSE</code></td>
+                <td>Determines if the generated database commands will be executed the generated SQL
+                    commands or just write it to stdout.</td>
+            </tr>
+            <tr>
+                <td>dbdeploy.quiet</td>
+                <td>--quiet</td>
+                <td><code>FALSE</code></td>
+                <td>Determines if the DDL statements will be written to the output or not.</td>
+            </tr>
+        </tbody>
+    </table>
+</p>
+
+@section dbdeploy-deltasets Delta sets
+
+<p>When an application starts growing, storing all the database schema in one directory, in one single
+list of revisions can become problematic. For such cases the dbdeploy tool supports delta sets. A delta
+set is a subdirectory in the revision source directory, which contains a list of revision files taking
+the same rules into account as revision files not within delta sets. The revision numbers must be
+unique per-deltaset.</p>
+
+<p>An example source directory layout using delta sets could look something like this:
+    <ul>
+        <li>schema/
+            <ul>
+                <li>tables/
+                    <ul>
+                        <li>1-mytable1.sql</li>
+                        <li>2-mytable2.sql</li>
+                        <li>3-mytable3.sql</li>
+                    </ul>
+                </li>
+                <li>views/
+                    <ul>
+                        <li>1-myview1.sql</li>
+                        <li>2-myview2.sql</li>
+                        <li>3-myview3.sql</li>
+                        <li>4-myview4.sql</li>
+                    </ul>
+                </li>
+                <li>procedures/
+                    <ul>
+                        <li>1-myproc1.sql</li>
+                        <li>2-myproc2.sql</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    If you want to apply the 3rd revision in the <code>views</code> delta set, then you can do it using
+    the<br/>
+    <code>./cyphp dbdeploy apply -r 3 -s views</code><br/>
+    command.
+</p>
