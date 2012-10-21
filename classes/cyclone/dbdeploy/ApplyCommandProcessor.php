@@ -14,9 +14,20 @@ class ApplyCommandProcessor extends CommandProcessor {
      */
     protected $_changelog_mgr;
 
+    /**
+     * @param ChangelogManager $changelog_mgr
+     * @return ApplyCommandProcessor
+     */
+    public function changelog_mgr(ChangelogManager $changelog_mgr) {
+        $this->_changelog_mgr = $changelog_mgr;
+        return $this;
+    }
+
     public function get_result() {
         $this->_source_reader->load_revisions($this->_delta_set);
-        $this->_changelog_mgr = new ChangelogManager($this->_connection, $this->_changelog_table);
+        if (NULL === $this->_changelog_mgr) {
+            $this->_changelog_mgr = new ChangelogManager($this->_connection, $this->_changelog_table);
+        }
 
         if ( ! is_numeric($this->_revision) || $this->_revision < 0)
             throw new Exception("'{$this->_revision}' is not a valid revision number");
