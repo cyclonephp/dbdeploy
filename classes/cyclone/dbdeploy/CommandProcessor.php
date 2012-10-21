@@ -87,13 +87,37 @@ abstract class CommandProcessor {
      */
     protected $_source_reader;
 
+    /**
+     * @var ChangelogManager
+     */
+    protected $_changelog_mgr;
+
+    /**
+     * @param ChangelogManager $changelog_mgr
+     * @return CommandProcessor
+     */
+    public function changelog_mgr(ChangelogManager $changelog_mgr) {
+        $this->_changelog_mgr = $changelog_mgr;
+        return $this;
+    }
+
     public function execute($args) {
         $this->setup($args);
         $this->_source_reader = new FileSourceReader($this->_src_dir);
+        $this->_source_reader->load_revisions($this->_delta_set);
 
-        $ddl_str = $this->get_result();
-        if ( ! $this->_quiet) {
-            echo $ddl_str;
+        try {
+            $ddl_str = $this->get_result();
+            if ( ! $this->_quiet) {
+                echo $ddl_str;
+            }
+        } catch (Exception $ex) {
+            echo $ex->getMessage() . \PHP_EOL;
+            echo "connection: {$this->_connection}" . \PHP_EOL;
+            echo "source directory: {$this->_src_dir}" . \PHP_EOL;
+            echo "delta set: {$this->_delta_set}" . \PHP_EOL;
+            echo "changelog table: {$this->_changelog_table}" . \PHP_EOL;
+            echo "revision: {$this->_revision}" . \PHP_EOL;
         }
     }
 

@@ -121,10 +121,14 @@ class ChangelogManager {
     }
 
     public function undo(Revision $rev) {
-        DB::query($rev->undo)->exec($this->_connection);
-        DB::delete($this->_changelog_table)
-            ->where('change_number', '=', DB::esc($rev->revision_number))
-            ->where('delta_set', '=', DB::esc($rev->delta_set))->exec($this->_connection);
+        try {
+            DB::query($rev->undo)->exec($this->_connection);
+            DB::delete($this->_changelog_table)
+                ->where('change_number', '=', DB::esc($rev->revision_number))
+                ->where('delta_set', '=', DB::esc($rev->delta_set))->exec($this->_connection);
+        } catch (db\Exception $ex) {
+            throw new Exception($ex->getMessage(), $ex->getCode(), $ex);
+        }
     }
 
     public function current($delta_set) {

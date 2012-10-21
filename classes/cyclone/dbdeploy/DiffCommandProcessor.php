@@ -26,8 +26,6 @@ class DiffCommandProcessor extends CommandProcessor {
         if ( ! is_numeric($rev_from) || ! is_numeric($rev_to))
             throw new Exception('invalid revision format');
 
-        $this->_source_reader->load_revisions($this->_delta_set);
-
         $revisions = Revision::get_by_delta_set($this->_delta_set);
 
         $rval = '';

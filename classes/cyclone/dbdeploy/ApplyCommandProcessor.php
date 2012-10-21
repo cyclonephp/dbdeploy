@@ -9,22 +9,7 @@ namespace cyclone\dbdeploy;
  */
 class ApplyCommandProcessor extends CommandProcessor {
 
-    /**
-     * @var ChangelogManager
-     */
-    protected $_changelog_mgr;
-
-    /**
-     * @param ChangelogManager $changelog_mgr
-     * @return ApplyCommandProcessor
-     */
-    public function changelog_mgr(ChangelogManager $changelog_mgr) {
-        $this->_changelog_mgr = $changelog_mgr;
-        return $this;
-    }
-
     public function get_result() {
-        $this->_source_reader->load_revisions($this->_delta_set);
         if (NULL === $this->_changelog_mgr) {
             $this->_changelog_mgr = new ChangelogManager($this->_connection, $this->_changelog_table);
         }
@@ -43,9 +28,11 @@ class ApplyCommandProcessor extends CommandProcessor {
         $rval = '';
         for ($i = $last_applied_rev + 1; $i <= $this->_revision; ++$i) {
             $revision = Revision::get_by($this->_delta_set, $i);
-            $this->_changelog_mgr->apply($revision);
+            if ($this->_exec) {
+                $this->_changelog_mgr->apply($revision);
+            }
             if ( ! $this->_quiet) {
-                $rval .= $revision->commit;
+                $rval .= $revision->commit . \PHP_EOL;
             }
         }
 
