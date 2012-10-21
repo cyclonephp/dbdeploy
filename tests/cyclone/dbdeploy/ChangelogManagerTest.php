@@ -44,6 +44,19 @@ drop table ". self::DUMMY_TBL . ";", self::DS, 1, 'descr');
         $this->assertEquals('descr', $result['description']);
     }
 
+    public function test_apply_fail() {
+        $rev = new Revision("bla bla", self::DS, 1, 'descr');
+        try {
+            $this->_mgr->apply($rev);
+            $this->fail("failed to throw exception for invalid DDL");
+        } catch (Exception $ex) {
+            $this->assertEquals("failed to apply revision 1 in delta set 'ds'", $ex->getMessage());
+            $this->assertInstanceOf('cyclone\\db\\Exception', $ex->getPrevious());
+        }
+        $count = DB::select()->from(self::CHANGELOG_TABLE)->exec('cytst-dbdeploy')->count();
+        $this->assertEquals(0, $count);
+    }
+
     public function test_undo() {
         $rev = new Revision("create table " . self::DUMMY_TBL . "(id int);
 -- //@UNDO

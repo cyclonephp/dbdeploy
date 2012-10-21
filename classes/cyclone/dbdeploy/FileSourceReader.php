@@ -5,6 +5,7 @@ namespace cyclone\dbdeploy;
 use cyclone as cy;
 
 /**
+ * @package dbdeploy
  * @author Bence Erős <crystal@cyclonephp.org>
  */
 class FileSourceReader implements SourceReader{

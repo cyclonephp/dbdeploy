@@ -102,7 +102,16 @@ class ChangelogManager {
             'applied_by' => static::$applied_by,
             'description' => $rev->description
         ))->exec($this->_connection);
-        DB::query($rev->commit)->exec($this->_connection);
+        try {
+            DB::query($rev->commit)->exec($this->_connection);
+        } catch (db\Exception $ex) {
+            DB::delete($this->_changelog_table)
+                ->where('change_number', '=', DB::esc($rev->revision_number))
+                ->where('delta_set', '=', DB::esc($rev->delta_set))->exec($this->_connection);
+            throw new Exception("failed to apply revision {$rev->revision_number} in delta set '{$rev->delta_set}'"
+                , $ex->getCode()
+                , $ex);
+        }
         $now = date('Y-m-d H:i:s');
         DB::update($this->_changelog_table)->values(array(
             'complete_dt' => $now
