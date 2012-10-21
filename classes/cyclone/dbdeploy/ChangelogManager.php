@@ -57,7 +57,7 @@ use cyclone\db\ConnectionException;
  *      This schema is the same as the schema used by the dbdeploy task of Phing.
  * </p>
  *
- * @package DB
+ * @package dbdeploy
  * @author Bence Erős <crystal@cyclonephp.org>
  */
 class ChangelogManager {

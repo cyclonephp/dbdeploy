@@ -3,6 +3,7 @@ namespace cyclone\dbdeploy;
 
 /**
  * @author Bence Erős <crystal@cyclonephp.org>
+ * @package dbdeploy
  */
 class MockSourceReader implements SourceReader {
 
