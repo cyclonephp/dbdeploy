@@ -108,7 +108,7 @@ class ChangelogManager {
             DB::delete($this->_changelog_table)
                 ->where('change_number', '=', DB::esc($rev->revision_number))
                 ->where('delta_set', '=', DB::esc($rev->delta_set))->exec($this->_connection);
-            throw new Exception("failed to apply revision {$rev->revision_number} in delta set '{$rev->delta_set}'"
+            throw new Exception("failed to apply revision {$rev->revision_number} in delta set '{$rev->delta_set}': " . $ex->getMessage()
                 , $ex->getCode()
                 , $ex);
         }

@@ -105,7 +105,7 @@ class FileSourceReader implements SourceReader{
         if ( ! is_numeric($dash_parts[0]) || count($dash_parts) < 2)
             throw new Exception("invalid revision file name: '$filename'");
 
-        $rev_num = array_shift($dash_parts);
+        $rev_num = (int) array_shift($dash_parts);
 
         $descr = implode('-', $dash_parts);
         $last_dot_pos = strrpos($descr, '.');
